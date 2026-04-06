@@ -1,0 +1,113 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+// KDash-400 U-Boot device tree — Allwinner T113-S3 (dual Cortex-A7)
+// Copyright (C) 2024 Kirby Nankivell
+
+/dts-v1/;
+
+#include "sun8i-t113s.dtsi"
+#include <dt-bindings/gpio/gpio.h>
+
+/ {
+	model = "KDash-400";
+	compatible = "kdash,kdash-400", "allwinner,sun8i-t113s";
+
+	aliases {
+		serial3 = &uart3;
+	};
+
+	chosen {
+		stdout-path = "serial3:115200n8";
+	};
+
+	/* ---------- Regulators ---------- */
+
+	reg_vcc5v: regulator-5v {
+		compatible = "regulator-fixed";
+		regulator-name = "vcc-5v";
+		regulator-min-microvolt = <5000000>;
+		regulator-max-microvolt = <5000000>;
+		regulator-always-on;
+	};
+
+	reg_3v3: regulator-3v3 {
+		compatible = "regulator-fixed";
+		regulator-name = "vcc-3v3";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		vin-supply = <&reg_vcc5v>;
+		regulator-always-on;
+	};
+
+	/* SY8008 DC/DC, also supplying VDD-SYS */
+	reg_vcc_core: regulator-core {
+		compatible = "regulator-fixed";
+		regulator-name = "vcc-core";
+		regulator-min-microvolt = <880000>;
+		regulator-max-microvolt = <880000>;
+		vin-supply = <&reg_vcc5v>;
+		regulator-always-on;
+	};
+};
+
+/* ---------- CPU voltage ---------- */
+
+&cpu0 { cpu-supply = <&reg_vcc_core>; };
+&cpu1 { cpu-supply = <&reg_vcc_core>; };
+
+/* ---------- Crystal ---------- */
+
+&dcxo {
+	clock-frequency = <24000000>;
+};
+
+/* ---------- GPIO controller ---------- */
+
+&pio {
+	vcc-pb-supply = <&reg_3v3>;
+	vcc-pd-supply = <&reg_3v3>;
+	vcc-pf-supply = <&reg_3v3>;
+	vcc-pg-supply = <&reg_3v3>;
+};
+
+/* ---------- Console ---------- */
+
+&uart3 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&uart3_pb_pins>;
+	status = "okay";
+};
+
+/* ---------- Storage ---------- */
+
+&mmc0 {
+	/* SD card — primary boot media and recovery */
+	pinctrl-0 = <&mmc0_pins>;
+	pinctrl-names = "default";
+	vmmc-supply = <&reg_3v3>;
+	cd-gpios = <&pio 5 6 GPIO_ACTIVE_LOW>; /* PF6: card detect */
+	disable-wp;
+	bus-width = <4>;
+	status = "okay";
+};
+
+&mmc2 {
+	/* eMMC — secondary boot media and root storage */
+	pinctrl-0 = <&mmc2_pins>;
+	pinctrl-names = "default";
+	vmmc-supply = <&reg_3v3>;
+	non-removable;
+	bus-width = <4>;
+	status = "okay";
+};
+
+/* ---------- USB ---------- */
+
+&usb_otg {
+	dr_mode = "peripheral";
+	status = "okay";
+};
+
+&usbphy {
+	usb0_vbus-supply = <&reg_vcc5v>;
+	status = "okay";
+};
