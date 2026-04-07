@@ -481,6 +481,13 @@ static int musb_usb_probe(struct udevice *dev)
 	ret = musb_lowlevel_init(host);
 	if (!ret)
 		printf("Allwinner mUSB OTG (Host)\n");
+#elif CONFIG_IS_ENABLED(DM_USB_GADGET)
+	pdata.mode = MUSB_PERIPHERAL;
+	host->host = musb_init_controller(&pdata, &glue->dev, base);
+	if (!host->host)
+		return -EIO;
+
+	printf("Allwinner mUSB OTG (Peripheral, DM)\n");
 #else
 	pdata.mode = MUSB_PERIPHERAL;
 	host->host = musb_register(&pdata, &glue->dev, base);
