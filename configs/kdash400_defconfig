@@ -55,12 +55,13 @@ CONFIG_CMD_USB_MASS_STORAGE=y
 # Both slots are 128 KB (0x20000).
 # Partition 1 of the disk image starts at 4 MB, safely after both slots.
 #
-# Dev 2 = mmc2 (SDC2, eMMC) — U-Boot uses controller number as device number.
+# Dev 1 = mmc2 (SDC2, eMMC) — U-Boot enumerates by probe order, not controller
+# number. Only mmc0 and mmc2 are enabled in DTS, so SDC0=dev0, SDC2=dev1.
 # CONFIG_ENV_OFFSET is the sunxi default (0xF0000), kept explicit for clarity.
 #
 # CONFIG_ENV_IS_IN_FAT is not set
 CONFIG_ENV_IS_IN_MMC=y
-CONFIG_SYS_MMC_ENV_DEV=2
+CONFIG_SYS_MMC_ENV_DEV=1
 CONFIG_ENV_OFFSET=0xF0000
 CONFIG_ENV_SIZE=0x20000
 CONFIG_SYS_REDUNDAND_ENVIRONMENT=y
