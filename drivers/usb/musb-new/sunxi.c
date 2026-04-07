@@ -502,6 +502,21 @@ static int musb_usb_probe(struct udevice *dev)
 	return ret;
 }
 
+#if CONFIG_IS_ENABLED(DM_USB_GADGET)
+static int sunxi_musb_gadget_handle_interrupts(struct udevice *dev)
+{
+	struct sunxi_glue *glue = dev_get_priv(dev);
+	struct musb_host_data *host = &glue->mdata;
+
+	host->host->isr(0, host->host);
+	return 0;
+}
+
+static const struct usb_gadget_generic_ops sunxi_musb_gadget_ops = {
+	.handle_interrupts	= sunxi_musb_gadget_handle_interrupts,
+};
+#endif
+
 static int musb_usb_remove(struct udevice *dev)
 {
 	struct sunxi_glue *glue = dev_get_priv(dev);
@@ -566,6 +581,8 @@ U_BOOT_DRIVER(usb_musb) = {
 	.remove		= musb_usb_remove,
 #ifdef CONFIG_USB_MUSB_HOST
 	.ops		= &musb_usb_ops,
+#elif CONFIG_IS_ENABLED(DM_USB_GADGET)
+	.ops		= &sunxi_musb_gadget_ops,
 #endif
 	.plat_auto	= sizeof(struct usb_plat),
 	.priv_auto	= sizeof(struct sunxi_glue),
