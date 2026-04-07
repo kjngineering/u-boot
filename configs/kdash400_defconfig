@@ -2,83 +2,14 @@ CONFIG_ARM=y
 CONFIG_ARCH_SUNXI=y
 CONFIG_DEFAULT_DEVICE_TREE="sun8i-t113s-kdash-400"
 CONFIG_SPL=y
-CONFIG_MACH_SUN8I_R528=y
-CONFIG_CONS_INDEX=4
-# CONFIG_SYS_MALLOC_CLEAR_ON_INIT is not set
-
-#
-# DRAM — LPDDR3 792 MHz, same silicon as MangoPi MQ-R T113
-# Revisit TPR values if a different DRAM part is used.
-#
-CONFIG_DRAM_CLK=792
-CONFIG_DRAM_ZQ=8092667
-CONFIG_SUNXI_MINIMUM_DRAM_MB=128
 CONFIG_DRAM_SUNXI_ODT_EN=0
 CONFIG_DRAM_SUNXI_TPR0=0x004a2195
 CONFIG_DRAM_SUNXI_TPR11=0x340000
 CONFIG_DRAM_SUNXI_TPR12=0x46
+CONFIG_MACH_SUN8I_R528=y
+CONFIG_DRAM_CLK=792
+CONFIG_DRAM_ZQ=8092667
+CONFIG_SUNXI_MINIMUM_DRAM_MB=128
+# CONFIG_SYS_MALLOC_CLEAR_ON_INIT is not set
 CONFIG_DRAM_SUNXI_TPR13=0x34000100
-
-#
-# Boot — script method, no EFI/VBE needed
-#
-# CONFIG_EFI_LOADER is not set
-# CONFIG_BOOTMETH_VBE is not set
-CONFIG_EXPO=y
-CONFIG_BOOTMETH_SCRIPT=y
-CONFIG_LAST_STAGE_INIT=y
-
-#
-# Networking — disabled, no BOOTP/TFTP/DHCP fallback needed
-#
-CONFIG_NO_NET=y
-
-#
-# USB — gadget/UMS (expose eMMC/SD over USB from U-Boot prompt)
-# PHY_SUN4I_USB, USB_MUSB_SUNXI, USB_MUSB_PIO_ONLY, and
-# USB_MUSB_FIXED_CONFIGDATA are all default y for ARCH_SUNXI/MACH_SUN8I_R528.
-# USB_GADGET_MANUFACTURER/VENDOR_NUM/PRODUCT_NUM default to Allwinner values.
-#
-CONFIG_USB_MUSB_PIO_ONLY=y
-CONFIG_USB_GADGET=y
-CONFIG_USB_MUSB_GADGET=y
-CONFIG_USB_GADGET_DOWNLOAD=y
-CONFIG_USB_ETHER=y
-CONFIG_CMD_USB_MASS_STORAGE=y
-# CONFIG_CMD_UMS_ABORT_KEYED is not set
-
-#
-# Environment — raw MMC (SD card dev 0 / eMMC dev 1)
-#
-# sunxi-common.h defaults to ENV_IS_IN_FAT; override that here.
-# Offsets are absolute byte offsets in the user area (partition 0).
-#   Primary   env: 0x000F0000 (960 KB)  — default for sunxi, not listed here
-#   Redundant env: 0x00110000 (960 KB + 128 KB)
-# Both slots are 128 KB (0x20000).
-# Partition 1 of the disk image starts at 4 MB, safely after both slots.
-#
-# Dev 1 = mmc2 (SDC2, eMMC) — U-Boot enumerates by probe order, not controller
-# number. Only mmc0 and mmc2 are enabled in DTS, so SDC0=dev0, SDC2=dev1.
-# CONFIG_ENV_OFFSET is the sunxi default (0xF0000), kept explicit for clarity.
-#
-# CONFIG_ENV_IS_IN_FAT is not set
-CONFIG_ENV_IS_IN_MMC=y
-CONFIG_SYS_MMC_ENV_DEV=1
-CONFIG_ENV_OFFSET=0xF0000
-CONFIG_ENV_SIZE=0x20000
-CONFIG_SYS_REDUNDAND_ENVIRONMENT=y
-CONFIG_ENV_OFFSET_REDUND=0x110000
-
-#
-# eMMC
-#
-CONFIG_MMC_SUNXI_SLOT_EXTRA=2
-CONFIG_SUPPORT_EMMC_BOOT=y
-
-#
-# Misc
-#
-CONFIG_VIDEO_ANSI=y
-CONFIG_REGEX=y
-CONFIG_SPL_CRC8=y
-CONFIG_TOOLS_MKEFICAPSULE=y
+CONFIG_CONS_INDEX=4
