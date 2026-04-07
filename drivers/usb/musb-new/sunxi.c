@@ -487,6 +487,10 @@ static int musb_usb_probe(struct udevice *dev)
 	if (!host->host)
 		return -EIO;
 
+	ret = usb_add_gadget_udc(&glue->dev, &host->host->g);
+	if (ret)
+		return ret;
+
 	printf("Allwinner mUSB OTG (Peripheral, DM)\n");
 #else
 	pdata.mode = MUSB_PERIPHERAL;
