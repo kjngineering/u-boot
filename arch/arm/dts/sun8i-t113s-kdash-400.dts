@@ -19,6 +19,24 @@
 		stdout-path = "serial3:115200n8";
 	};
 
+	/* ---------- LEDs ---------- */
+
+	leds {
+		compatible = "gpio-leds";
+
+		led-green {
+			label = "green";
+			gpios = <&pio 1 4 GPIO_ACTIVE_LOW>; /* PB4 */
+			default-state = "off";
+		};
+
+		led-red {
+			label = "red";
+			gpios = <&pio 1 5 GPIO_ACTIVE_LOW>; /* PB5 */
+			default-state = "on";
+		};
+	};
+
 	/* ---------- Regulators ---------- */
 
 	reg_vcc5v: regulator-5v {
