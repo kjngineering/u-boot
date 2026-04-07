@@ -19,6 +19,22 @@
 		stdout-path = "serial3:115200n8";
 	};
 
+	/* ---------- Buttons ---------- */
+
+	buttons {
+		compatible = "gpio-keys";
+
+		button-a {
+			label = "Key A";
+			gpios = <&pio 6 6 GPIO_ACTIVE_LOW>; /* PG6 */
+		};
+
+		button-b {
+			label = "Key B";
+			gpios = <&pio 6 7 GPIO_ACTIVE_LOW>; /* PG7 */
+		};
+	};
+
 	/* ---------- LEDs ---------- */
 
 	leds {
