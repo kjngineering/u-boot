@@ -244,12 +244,12 @@ static int sunxi_musb_enable(struct musb *musb)
 			printf("No host cable detected: ");
 			return -ENODEV;
 		}
+	}
 
-		ret = generic_phy_power_on(&glue->phy);
-		if (ret) {
-			pr_debug("failed to power on USB PHY\n");
-			return ret;
-		}
+	ret = generic_phy_power_on(&glue->phy);
+	if (ret) {
+		pr_debug("failed to power on USB PHY\n");
+		return ret;
 	}
 
 	USBC_ForceVbusValidToHigh(musb->mregs);
@@ -268,12 +268,10 @@ static void sunxi_musb_disable(struct musb *musb)
 	if (!enabled)
 		return;
 
-	if (is_host_enabled(musb)) {
-		ret = generic_phy_power_off(&glue->phy);
-		if (ret) {
-			pr_debug("failed to power off USB PHY\n");
-			return;
-		}
+	ret = generic_phy_power_off(&glue->phy);
+	if (ret) {
+		pr_debug("failed to power off USB PHY\n");
+		return;
 	}
 
 	USBC_ForceVbusValidToLow(musb->mregs);
