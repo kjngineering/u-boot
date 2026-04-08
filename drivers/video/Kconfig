@@ -287,6 +287,16 @@ config SIMPLE_PANEL
 	  This turns on a simple panel driver that enables a compatible
 	  video panel.
 
+config PANEL_YOUSEE_YX40025A
+	bool "Enable Yousee YX40025A 720x720 round panel driver"
+	depends on PANEL
+	select VIDEO_MIPI_DBI
+	help
+	  Support for the Yousee YX40025A 4.0" 720x720 round TFT panel
+	  (ST7701S controller). Communicates via 9-bit SPI (MIPI DBI type C)
+	  for command/data and parallel RGB666 for pixel data. Used on
+	  the KDash-400 board.
+
 config PANEL_HX8238D
 	bool "Enable Himax HX-8238D LCD driver"
 	depends on PANEL

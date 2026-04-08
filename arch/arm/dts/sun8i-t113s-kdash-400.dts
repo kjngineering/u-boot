@@ -6,6 +6,7 @@
 
 #include "sun8i-t113s.dtsi"
 #include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/pwm/pwm.h>
 
 / {
 	model = "KDash-400";
@@ -72,6 +73,36 @@
 		regulator-max-microvolt = <3300000>;
 		vin-supply = <&reg_vcc5v>;
 		regulator-always-on;
+	};
+
+	/* ---------- Display ---------- */
+
+	backlight: pwm-backlight {
+		compatible = "pwm-backlight";
+		pwms = <&pwm 7 10000000 0>; /* PWM ch7 (PD22), 10ms period, normal polarity */
+		brightness-levels = <0 1 2 3 4 5 6 7 8 9>;
+		default-brightness-level = <8>;
+		power-supply = <&reg_3v3>;
+	};
+
+	panel_spi: spi-gpio {
+		compatible = "spi-gpio";
+		#address-cells = <1>;
+		#size-cells = <0>;
+		sck-gpios  = <&pio 6 12 GPIO_ACTIVE_HIGH>; /* PG12: SCLK */
+		mosi-gpios = <&pio 6 13 GPIO_ACTIVE_HIGH>; /* PG13: MOSI */
+		cs-gpios   = <&pio 6 15 GPIO_ACTIVE_LOW>;  /* PG15: CS */
+		num-chipselects = <1>;
+
+		panel@0 {
+			compatible = "yousee,yx40025a";
+			reg = <0>;
+			spi-max-frequency = <10000000>;
+			spi-3wire;
+			reset-gpios = <&pio 6 14 GPIO_ACTIVE_LOW>; /* PG14: RESET */
+			backlight = <&backlight>;
+			power-supply = <&reg_3v3>;
+		};
 	};
 
 	/* SY8008 DC/DC, also supplying VDD-SYS */
@@ -146,4 +177,28 @@
 &usbphy {
 	usb0_vbus-supply = <&reg_vcc5v>;
 	status = "okay";
+};
+
+/* ---------- Display ---------- */
+
+&pio {
+	pwm7_pd22_pin: pwm7-pd22-pin {
+		/* PWM7 (LCD backlight): PD22 */
+		pins = "PD22";
+		function = "pwm7";
+	};
+};
+
+&{/soc} {
+	pwm: pwm@2000c00 {
+		compatible = "allwinner,sun20i-d1-pwm";
+		reg = <0x2000c00 0x400>;
+		clocks = <&ccu CLK_BUS_PWM>, <&dcxo>, <&ccu CLK_APB0>;
+		clock-names = "bus", "hosc", "apb";
+		resets = <&ccu RST_BUS_PWM>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&pwm7_pd22_pin>;
+		#pwm-cells = <3>;
+		status = "okay";
+	};
 };
