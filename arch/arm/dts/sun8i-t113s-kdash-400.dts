@@ -27,11 +27,13 @@
 		button-a {
 			label = "Key A";
 			gpios = <&pio 6 6 GPIO_ACTIVE_LOW>; /* PG6 */
+			linux,code = <30>; /* KEY_A — required by U-Boot button-gpio probe */
 		};
 
 		button-b {
 			label = "Key B";
 			gpios = <&pio 6 7 GPIO_ACTIVE_LOW>; /* PG7 */
+			linux,code = <48>; /* KEY_B */
 		};
 	};
 
