@@ -524,10 +524,13 @@ int mmc_get_env_dev(void)
 	case BOOT_DEVICE_MMC1:
 		return 0;
 	case BOOT_DEVICE_MMC2:
-		if (CONFIG_MMC_SUNXI_SLOT_EXTRA != -1)
-			return CONFIG_MMC_SUNXI_SLOT_EXTRA;
-		else
-			return 1;
+		/*
+		 * MMC_SUNXI_SLOT_EXTRA registers SDC2 as a legacy SPL slot
+		 * (value = hardware controller index = 2), but in DM mode
+		 * U-Boot enumerates only probed devices: mmc@4020000=0,
+		 * mmc@4022000=1. Return the DM probe index, not the slot index.
+		 */
+		return CONFIG_SYS_MMC_ENV_DEV;
 	default:
 		return CONFIG_SYS_MMC_ENV_DEV;
 	}
